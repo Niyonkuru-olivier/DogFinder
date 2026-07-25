@@ -158,8 +158,6 @@ class BreedProvider extends ChangeNotifier {
         return breeds.where((breed) => breed.sizeCategory == 'medium').toList();
       case BreedFilter.large:
         return breeds.where((breed) => breed.sizeCategory == 'large').toList();
-      case BreedFilter.active:
-        return breeds.where((breed) => breed.isActive).toList();
       case BreedFilter.family:
         return breeds.where((breed) => breed.isFamilyFriendly).toList();
     }

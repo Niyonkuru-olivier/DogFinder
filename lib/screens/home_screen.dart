@@ -6,6 +6,7 @@ import '../providers/breed_provider.dart';
 import '../routes/app_routes.dart';
 import '../utils/constants.dart';
 import '../widgets/breed_card.dart';
+import '../widgets/dog_image_widget.dart';
 import '../widgets/search_and_filters.dart';
 import '../widgets/skeleton_loader.dart';
 import 'detail_screen.dart';
@@ -48,11 +49,18 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
+            tooltip: 'Dog Breed Identifier',
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoutes.identifier);
+            },
+            icon: const Icon(Icons.center_focus_strong_rounded),
+          ),
+          IconButton(
             tooltip: 'Compare breeds',
             onPressed: () {
               Navigator.pushNamed(context, AppRoutes.compare);
             },
-            icon: const Icon(Icons.compare_arrows),
+            icon: const Icon(Icons.compare_arrows_rounded),
           ),
           IconButton(
             tooltip: 'Favorites',
@@ -62,18 +70,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 MaterialPageRoute(builder: (_) => const FavoritesScreen()),
               );
             },
-            icon: const Icon(Icons.favorite),
+            icon: const Icon(Icons.favorite_rounded),
           ),
           IconButton(
             tooltip: themeProvider.isDarkMode ? 'Light mode' : 'Dark mode',
             onPressed: themeProvider.toggleTheme,
-            icon: Icon(themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode),
+            icon: Icon(themeProvider.isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showRandomDog(context),
-        icon: const Icon(Icons.casino),
+        icon: const Icon(Icons.casino_rounded),
         label: const Text('Surprise Me'),
       ),
       body: Consumer<BreedProvider>(
@@ -119,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 60, color: Colors.red),
+              const Icon(Icons.error_outline_rounded, size: 60, color: Colors.red),
               const SizedBox(height: 16),
               Text(
                 breedProvider.errorMessage!,
@@ -137,10 +145,22 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     if (breedProvider.visibleBreeds.isEmpty) {
-      return const Center(
-        child: Text(
-          'No breeds found',
-          style: TextStyle(fontSize: 18),
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.search_off_rounded, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
+            const Text(
+              'No breeds found',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Try changing your filter or search query.',
+              style: TextStyle(color: Colors.grey.shade500),
+            ),
+          ],
         ),
       );
     }
@@ -213,16 +233,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              if (breed.imageUrl != null)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.network(
-                    breed.imageUrl!,
-                    height: 240,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: DogImageWidget(
+                  imageUrl: breed.displayImageUrl,
+                  fallbackUrl: breed.fallbackImageUrl,
+                  height: 240,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
                 ),
+              ),
               const SizedBox(height: 16),
               Text(
                 breed.shortDescription,

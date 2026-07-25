@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -6,6 +5,7 @@ import '../models/breed.dart';
 import '../providers/app_providers.dart';
 import '../providers/breed_provider.dart';
 import '../theme/app_theme.dart';
+import '../widgets/dog_image_widget.dart';
 
 class CompareScreen extends StatelessWidget {
   const CompareScreen({super.key});
@@ -73,8 +73,8 @@ class CompareScreen extends StatelessWidget {
                   title: Text(breed.name),
                   subtitle: Text(breed.lifeSpan),
                   trailing: selected
-                      ? const Icon(Icons.check_circle, color: AppColors.primary)
-                      : const Icon(Icons.add_circle_outline),
+                      ? const Icon(Icons.check_circle_rounded, color: AppColors.primary)
+                      : const Icon(Icons.add_circle_outline_rounded),
                   onTap: () => compareProvider.selectBreed(breed),
                 );
               },
@@ -108,25 +108,16 @@ class _CompareCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          if (breed.imageUrl != null)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: CachedNetworkImage(
-                imageUrl: breed.imageUrl!,
-                height: 110,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            )
-          else
-            Container(
+          ClipRRect(
+            borderRadius: BorderRadius.circular(14),
+            child: DogImageWidget(
+              imageUrl: breed.displayImageUrl,
+              fallbackUrl: breed.fallbackImageUrl,
               height: 110,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: const Icon(Icons.pets),
+              width: double.infinity,
+              fit: BoxFit.cover,
             ),
+          ),
           const SizedBox(height: 10),
           Text(
             breed.name,

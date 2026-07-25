@@ -3,10 +3,12 @@ import 'package:provider/provider.dart';
 
 import 'providers/app_providers.dart';
 import 'providers/breed_provider.dart';
+import 'providers/history_provider.dart';
 import 'routes/app_routes.dart';
 import 'screens/compare_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/splash_screen.dart';
+import 'screens/breed_identifier_screen.dart';
 import 'theme/app_theme.dart';
 import 'utils/constants.dart';
 
@@ -26,6 +28,7 @@ class DogFinderApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RandomDogProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()..initialize()),
         ChangeNotifierProvider(create: (_) => CompareProvider()),
+        ChangeNotifierProvider(create: (_) => HistoryProvider()..initialize()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
@@ -40,6 +43,7 @@ class DogFinderApp extends StatelessWidget {
               AppRoutes.splash: (_) => const SplashScreen(),
               AppRoutes.home: (_) => const HomeScreen(),
               AppRoutes.compare: (_) => const CompareScreen(),
+              AppRoutes.identifier: (_) => const BreedIdentifierScreen(),
             },
           );
         },

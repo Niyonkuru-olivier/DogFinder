@@ -18,7 +18,6 @@ enum BreedFilter {
   small,
   medium,
   large,
-  active,
   family,
 }
 
@@ -33,8 +32,6 @@ extension BreedFilterLabel on BreedFilter {
         return 'Medium Dogs';
       case BreedFilter.large:
         return 'Large Dogs';
-      case BreedFilter.active:
-        return 'Active Dogs';
       case BreedFilter.family:
         return 'Family Dogs';
     }
@@ -43,15 +40,13 @@ extension BreedFilterLabel on BreedFilter {
   String get emoji {
     switch (this) {
       case BreedFilter.all:
-        return '🐾';
+        return '🐶';
       case BreedFilter.small:
         return '🐕';
       case BreedFilter.medium:
-        return '🐕‍🦺';
+        return '🐩';
       case BreedFilter.large:
-        return '🦮';
-      case BreedFilter.active:
-        return '⚡';
+        return '🐕🦺';
       case BreedFilter.family:
         return '👨‍👩‍👧';
     }

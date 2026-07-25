@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -7,6 +6,7 @@ import '../models/breed.dart';
 import '../providers/app_providers.dart';
 import '../services/api_service.dart';
 import '../theme/app_theme.dart';
+import '../widgets/dog_image_widget.dart';
 
 class DetailScreen extends StatefulWidget {
   final Breed breed;
@@ -20,7 +20,6 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   final ApiService _apiService = ApiService();
   late Breed _breed;
-  bool _loadingImage = false;
 
   @override
   void initState() {
@@ -32,13 +31,13 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Future<void> _loadImage() async {
-    setState(() => _loadingImage = true);
     final imageUrl = await _apiService.fetchBreedImage(_breed.id);
     if (!mounted) return;
-    setState(() {
-      _breed = _breed.copyWith(imageUrl: imageUrl);
-      _loadingImage = false;
-    });
+    if (imageUrl != null) {
+      setState(() {
+        _breed = _breed.copyWith(imageUrl: imageUrl);
+      });
+    }
   }
 
   Future<void> _shareBreed() async {
@@ -61,11 +60,11 @@ class _DetailScreenState extends State<DetailScreen> {
         actions: [
           IconButton(
             onPressed: _shareBreed,
-            icon: const Icon(Icons.share),
+            icon: const Icon(Icons.ios_share_rounded),
           ),
           IconButton(
             onPressed: () => favorites.toggleFavorite(_breed.id),
-            icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+            icon: Icon(isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded),
           ),
         ],
       ),
@@ -102,7 +101,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     children: _breed.temperamentTags
                         .map(
                           (tag) => Chip(
-                            avatar: const Icon(Icons.star, size: 16, color: AppColors.primary),
+                            avatar: const Icon(Icons.stars_rounded, size: 16, color: AppColors.primary),
                             label: Text(tag),
                           ),
                         )
@@ -110,27 +109,27 @@ class _DetailScreenState extends State<DetailScreen> {
                   ),
                   const SizedBox(height: 24),
                   _InfoCard(
-                    icon: Icons.monitor_weight_outlined,
+                    icon: Icons.scale_rounded,
                     title: 'Weight',
                     value: '${_breed.weightMetric} kg',
                   ),
                   _InfoCard(
-                    icon: Icons.height,
+                    icon: Icons.straighten_rounded,
                     title: 'Height',
                     value: '${_breed.heightMetric} cm',
                   ),
                   _InfoCard(
-                    icon: Icons.schedule,
+                    icon: Icons.timer_rounded,
                     title: 'Life Span',
                     value: _breed.lifeSpan,
                   ),
                   _InfoCard(
-                    icon: Icons.public,
+                    icon: Icons.public_rounded,
                     title: 'Origin',
                     value: _breed.origin,
                   ),
                   _InfoCard(
-                    icon: Icons.category_outlined,
+                    icon: Icons.grid_view_rounded,
                     title: 'Breed Group',
                     value: _breed.breedGroup,
                   ),
@@ -146,32 +145,13 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget _buildHeroImage() {
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(bottom: Radius.circular(30)),
-      child: _breed.imageUrl == null
-          ? Container(
-              height: 320,
-              color: Colors.grey.shade200,
-              child: Center(
-                child: _loadingImage
-                    ? const CircularProgressIndicator()
-                    : const Icon(Icons.pets, size: 72, color: Colors.grey),
-              ),
-            )
-          : CachedNetworkImage(
-              imageUrl: _breed.imageUrl!,
-              height: 320,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => Container(
-                height: 320,
-                color: Colors.grey.shade200,
-                child: const Center(child: CircularProgressIndicator()),
-              ),
-              errorWidget: (context, url, error) => Container(
-                height: 320,
-                color: Colors.grey.shade200,
-                child: const Icon(Icons.pets, size: 72, color: Colors.grey),
-              ),
-            ),
+      child: DogImageWidget(
+        imageUrl: _breed.displayImageUrl,
+        fallbackUrl: _breed.fallbackImageUrl,
+        height: 320,
+        width: double.infinity,
+        fit: BoxFit.cover,
+      ),
     );
   }
 }

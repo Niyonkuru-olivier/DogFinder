@@ -27,7 +27,7 @@ class FavoritesScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.favorite_border, size: 64, color: Colors.grey),
+                  Icon(Icons.favorite_border_rounded, size: 64, color: Colors.grey),
                   SizedBox(height: 12),
                   Text(
                     'No favorite breeds yet',

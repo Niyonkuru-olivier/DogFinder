@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../models/breed.dart';
 import '../providers/app_providers.dart';
 import '../theme/app_theme.dart';
+import 'dog_image_widget.dart';
 
 class BreedCard extends StatelessWidget {
   final Breed breed;
@@ -55,10 +55,17 @@ class BreedCard extends StatelessWidget {
                     style: IconButton.styleFrom(
                       backgroundColor: Colors.white.withValues(alpha: 0.92),
                       foregroundColor: isFavorite ? Colors.red : AppColors.primary,
+                      elevation: 2,
                     ),
                     onPressed: () => favorites.toggleFavorite(breed.id),
-                    icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
-                  ),
+                    icon: Icon(
+                      isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                      size: 22,
+                    ),
+                  ).animate(target: isFavorite ? 1 : 0).scale(
+                        duration: 200.ms,
+                        curve: Curves.easeOutBack,
+                      ),
                 ),
               ],
             ),
@@ -68,39 +75,43 @@ class BreedCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    breed.name,
+                    '🐶 ${breed.name}',
                     style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
+                      letterSpacing: -0.5,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    breed.shortDescription,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      height: 1.4,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      _InfoChip(
-                        icon: Icons.schedule,
-                        label: breed.lifeSpan,
+                  if (breed.temperament.isNotEmpty) ...[
+                    Text(
+                      breed.temperament,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.grey.shade600,
+                        height: 1.3,
                       ),
-                      if (breed.temperamentTags.isNotEmpty)
-                        _InfoChip(
-                          icon: Icons.psychology_outlined,
-                          label: breed.temperamentTags.first,
-                        ),
-                      _InfoChip(
-                        icon: Icons.monitor_weight_outlined,
-                        label: '${breed.weightMetric} kg',
+                    ),
+                    const SizedBox(height: 14),
+                  ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _DetailMetric(
+                        label: 'Life Span',
+                        value: breed.lifeSpan,
+                        icon: Icons.timer_rounded,
+                      ),
+                      _DetailMetric(
+                        label: 'Weight',
+                        value: '${breed.weightMetric} kg',
+                        icon: Icons.scale_rounded,
+                      ),
+                      _DetailMetric(
+                        label: 'Height',
+                        value: '${breed.heightMetric} cm',
+                        icon: Icons.straighten_rounded,
                       ),
                     ],
                   ),
@@ -117,58 +128,62 @@ class BreedCard extends StatelessWidget {
   }
 
   Widget _buildImage() {
-    if (breed.imageUrl == null) {
-      return Container(
-        height: 210,
-        width: double.infinity,
-        color: Colors.grey.shade200,
-        child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-      );
-    }
-
-    return CachedNetworkImage(
-      imageUrl: breed.imageUrl!,
+    return DogImageWidget(
+      imageUrl: breed.displayImageUrl,
+      fallbackUrl: breed.fallbackImageUrl,
       height: 210,
       width: double.infinity,
       fit: BoxFit.cover,
-      placeholder: (context, url) => Container(
-        height: 210,
-        color: Colors.grey.shade200,
-        child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-      ),
-      errorWidget: (context, url, error) => Container(
-        height: 210,
-        color: Colors.grey.shade200,
-        child: const Icon(Icons.pets, size: 48, color: Colors.grey),
-      ),
     );
   }
 }
 
-class _InfoChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
 
-  const _InfoChip({required this.icon, required this.label});
+class _DetailMetric extends StatelessWidget {
+  final String label;
+  final String value;
+  final IconData icon;
+
+  const _DetailMetric({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: AppColors.primary),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-          ),
-        ],
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, size: 14, color: AppColors.primary),
+                const SizedBox(width: 4),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey.shade500,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

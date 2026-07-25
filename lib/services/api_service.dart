@@ -97,9 +97,9 @@ class ApiService {
 
     await Future.wait(
       target.map((breed) async {
-        if (breed.imageUrl != null) return;
+        if (breed.imageUrl != null && breed.imageUrl!.isNotEmpty) return;
         final imageUrl = await fetchBreedImage(breed.id);
-        breed.imageUrl = imageUrl;
+        breed.imageUrl = (imageUrl != null && imageUrl.isNotEmpty) ? imageUrl : breed.displayImageUrl;
       }),
     );
   }

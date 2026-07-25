@@ -43,10 +43,10 @@ class _BreedSearchBarState extends State<BreedSearchBar> {
         onChanged: widget.onChanged,
         decoration: InputDecoration(
           hintText: 'Search dog breeds...',
-          prefixIcon: const Icon(Icons.search, color: AppColors.primary),
+          prefixIcon: const Icon(Icons.search_rounded, color: AppColors.primary),
           suffixIcon: widget.controller.text.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: const Icon(Icons.cancel_rounded),
                   onPressed: widget.onClear,
                 )
               : null,
@@ -199,7 +199,7 @@ class OfflineBanner extends StatelessWidget {
       ),
       child: const Row(
         children: [
-          Icon(Icons.wifi_off, color: Colors.orange),
+          Icon(Icons.wifi_off_rounded, color: Colors.orange),
           SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -261,7 +261,7 @@ class _OwnershipTip extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         children: [
-          Icon(Icons.check_circle, color: AppColors.primary, size: 18),
+          Icon(Icons.check_circle_rounded, color: AppColors.primary, size: 18),
           SizedBox(width: 8),
           Expanded(child: Text(text)),
         ],
